@@ -25,16 +25,14 @@ public class Profile {
     @Column(unique = true)
     private String email;
 
-    private byte searchAgeMin;
-    private byte searchAgeMax;
-    private String searchGender;
-
+    private Byte searchAgeMin;
+    private Byte searchAgeMax;
+    private Gender searchGender;
 
     private String university;
     private String faculty;
 
     private String searchUniversity;
     private String searchFaculty;
-
 
 }
