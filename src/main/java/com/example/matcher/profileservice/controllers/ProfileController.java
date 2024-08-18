@@ -23,26 +23,26 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @PostMapping("/create")
-    public ResponseEntity<Profile> createProfile(@RequestBody Profile profile){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString((String) authentication.getPrincipal()); // UUID будет в качестве principal
+    public ResponseEntity<Profile> createProfile(@RequestBody Profile profile, @RequestParam UUID userId){
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        UUID userId = UUID.fromString((String) authentication.getPrincipal()); // UUID будет в качестве principal
         profile.setUserId(userId);
         return new ResponseEntity<>(profileService.createProfile(profile), HttpStatus.OK);
     }
 
     @PutMapping("/updateProfile")
-    public ResponseEntity<Profile> updateProfile(@RequestBody ProfileUpdateDTO profile){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString((String) authentication.getPrincipal()); // UUID будет в качестве principal
+    public ResponseEntity<Profile> updateProfile(@RequestBody ProfileUpdateDTO profile, @RequestParam UUID userId){
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        UUID userId = UUID.fromString((String) authentication.getPrincipal()); // UUID будет в качестве principal
         return new ResponseEntity<>(profileService.updateProfile(userId, profile), HttpStatus.OK);
     }
 
 
     @Transactional
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteProfile() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString((String) authentication.getPrincipal()); // UUID будет в качестве principal
+    public ResponseEntity<?> deleteProfile(@RequestParam UUID userId) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        UUID userId = UUID.fromString((String) authentication.getPrincipal()); // UUID будет в качестве principal
         return new ResponseEntity<>(profileService.deleteProfile(userId), HttpStatus.OK);
     }
 
@@ -52,9 +52,9 @@ public class ProfileController {
     }
 
     @GetMapping("/myProfile")
-    public ResponseEntity<Profile> getMyProfile(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString((String) authentication.getPrincipal()); // UUID будет в качестве principal
+    public ResponseEntity<Profile> getMyProfile(@RequestParam UUID userId){
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        UUID userId = UUID.fromString((String) authentication.getPrincipal()); // UUID будет в качестве principal
         return new ResponseEntity<>(profileService.getProfileByUserId(userId), HttpStatus.OK);
     }
 }
