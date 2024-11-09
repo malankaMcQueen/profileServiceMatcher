@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -24,6 +26,9 @@ public class Profile {
 //    private Location
     @Column(unique = true)
     private String email;
+
+    @ElementCollection
+    private List<String> photoLinks = new ArrayList<>();;
 
     private Byte searchAgeMin;
     private Byte searchAgeMax;

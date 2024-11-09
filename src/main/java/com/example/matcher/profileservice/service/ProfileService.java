@@ -1,17 +1,22 @@
 package com.example.matcher.profileservice.service;
 
+import com.example.matcher.profileservice.aspect.AspectAnnotation;
 import com.example.matcher.profileservice.dto.ProfileEvent;
 
 import com.example.matcher.profileservice.dto.ProfileUpdateDTO;
+import com.example.matcher.profileservice.exception.BadRequestException;
 import com.example.matcher.profileservice.exception.ResourceNotFoundException;
 import com.example.matcher.profileservice.exception.UserAlreadyExistException;
-import com.example.matcher.profileservice.kafka.KafkaProducerService;
+//import com.example.matcher.profileservice.kafka.KafkaProducerService;
 import com.example.matcher.profileservice.model.Profile;
 import com.example.matcher.profileservice.repository.ProfileRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -22,7 +27,9 @@ import java.util.UUID;
 public class ProfileService {
 
     private final ProfileRepository profileRepository;
-    private final KafkaProducerService kafkaProducerService;
+    private final S3Service s3Service;
+
+//    private final KafkaProducerService kafkaProducerService;
 
     public Profile createProfile(Profile profile) {
         profileRepository.findByUserId(profile.getUserId()).ifPresent(existingProfile -> {
@@ -30,8 +37,35 @@ public class ProfileService {
         });
         ProfileEvent profileEvent = new ProfileEvent();
         BeanUtils.copyProperties(profile, profileEvent);
-        kafkaProducerService.sendMessage(profileEvent, "create_profile");
+//        kafkaProducerService.sendMessage(profileEvent, "create_profile");
         return profileRepository.save(profile);
+    }
+
+    @Transactional
+    public List<String> addPhotoInProfile(UUID userId, MultipartFile file) throws IOException {
+        Profile profile = profileRepository.findByUserId(userId).orElseThrow(()
+                -> new ResourceNotFoundException("Пользователь с данным ID не найден."));
+        List<String> photoLinks = profile.getPhotoLinks();
+        if (photoLinks.size() < 6) {
+            String link = s3Service.uploadFile(file);
+            photoLinks.add(link);
+            profile.setPhotoLinks(photoLinks);
+            profileRepository.save(profile);
+            return photoLinks;
+        }
+        else {
+            throw new BadRequestException("Photo max size 6");
+        }
+    }
+
+    public List<String> deletePhotoInProfile(UUID userId, String link) {
+        Profile profile = profileRepository.findByUserId(userId).orElseThrow(()
+                -> new ResourceNotFoundException("Пользователь с данным ID не найден."));
+        List<String> photoLinks = profile.getPhotoLinks();
+        photoLinks.remove(link);
+        profile.setPhotoLinks(photoLinks);
+        profileRepository.save(profile);
+        return photoLinks;
     }
 
     public Profile updateProfile(UUID userId, ProfileUpdateDTO profileUpdate) {
@@ -97,34 +131,14 @@ public class ProfileService {
         profileRepository.save(profile);
         ProfileEvent profileEvent = new ProfileEvent();
         BeanUtils.copyProperties(profile, profileEvent);
-        kafkaProducerService.sendMessage(profileEvent, "profile_update");
+//        kafkaProducerService.sendMessage(profileEvent, "profile_update");
         return profile;
     }
 
-//    public Profile updateProfile(UUID userId, ProfileUpdateDTO profileUpdate) {
-//        Profile profile = profileRepository.findByUserId(userId).orElseThrow(()
-//                -> new ResourceNotFoundException("Пользователь с данным ID не найден."));
-//
-//        Optional.ofNullable(profileUpdate.getFirstName()).ifPresent(profile::setFirstName);
-//        Optional.ofNullable(profileUpdate.getLastName()).ifPresent(profile::setLastName);
-//        Optional.ofNullable(profileUpdate.getDateOfBirth()).ifPresent(profile::setDateOfBirth);
-//        Optional.ofNullable(profileUpdate.getCity()).ifPresent(profile::setCity);
-//        Optional.ofNullable(profileUpdate.getSearchAgeMin()).ifPresent(profile::setSearchAgeMin);
-//        Optional.ofNullable(profileUpdate.getSearchAgeMax()).ifPresent(profile::setSearchAgeMax);
-//        Optional.ofNullable(profileUpdate.getSearchGender()).ifPresent(profile::setSearchGender);
-//        Optional.ofNullable(profileUpdate.getSearchUniversity()).ifPresent(profile::setSearchUniversity);
-//        Optional.ofNullable(profileUpdate.getSearchFaculty()).ifPresent(profile::setSearchFaculty);
-//        profileRepository.save(profile);
-//ProfileEvent profileEvent = new ProfileEvent();
-//        BeanUtils.copyProperties(profile, profileEvent);
-//        kafkaProducerService.sendMessage(profileEvent, "profile_update");
-//        // send event
-//        return profile;
-//    }
-
+    @AspectAnnotation
     public Object deleteProfile(UUID userId) {
         profileRepository.deleteByUserId(userId);
-        kafkaProducerService.sendMessage(userId.toString(), "delete_profile");
+//        kafkaProducerService.sendMessage(userId.toString(), "delete_profile");
         return "Success";
     }
 
@@ -136,4 +150,6 @@ public class ProfileService {
         return profileRepository.findByUserId(userId).orElseThrow(()
                 -> new ResourceNotFoundException("Пользователь с данным ID не найден."));
     }
+
+
 }
