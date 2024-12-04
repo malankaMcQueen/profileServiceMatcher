@@ -15,7 +15,7 @@ public class ProfileEvent {
     private LocalDate dateOfBirth;
     private Gender gender;
     private String city;
-    //    private Location
+    private String geoHash;
 
     private Byte searchAgeMin;
     private Byte searchAgeMax;
