@@ -8,6 +8,7 @@ import com.example.matcher.profileservice.exception.BadRequestException;
 import com.example.matcher.profileservice.exception.ResourceNotFoundException;
 import com.example.matcher.profileservice.exception.UserAlreadyExistException;
 //import com.example.matcher.profileservice.kafka.KafkaProducerService;
+import com.example.matcher.profileservice.kafka.KafkaProducerService;
 import com.example.matcher.profileservice.model.Profile;
 import com.example.matcher.profileservice.repository.ProfileRepository;
 import lombok.AllArgsConstructor;
@@ -29,7 +30,7 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final S3Service s3Service;
 
-//    private final KafkaProducerService kafkaProducerService;
+    private final KafkaProducerService kafkaProducerService;
 
     public Profile createProfile(Profile profile) {
         profileRepository.findByUserId(profile.getUserId()).ifPresent(existingProfile -> {
@@ -37,7 +38,7 @@ public class ProfileService {
         });
         ProfileEvent profileEvent = new ProfileEvent();
         BeanUtils.copyProperties(profile, profileEvent);
-//        kafkaProducerService.sendMessage(profileEvent, "create_profile");
+        kafkaProducerService.sendMessage(profileEvent, "create_profile");
         return profileRepository.save(profile);
     }
 
@@ -71,15 +72,17 @@ public class ProfileService {
     public Profile updateProfile(UUID userId, ProfileUpdateDTO profileUpdate) {
         // Проверка, что DTO не пустое
         if (profileUpdate == null ||
-                (profileUpdate.getFirstName() == null &&
-                        profileUpdate.getLastName() == null &&
-                        profileUpdate.getDateOfBirth() == null &&
-                        profileUpdate.getCity() == null &&
+                (profileUpdate.getCity() == null &&
+                profileUpdate.getFirstName() == null &&
                         profileUpdate.getSearchAgeMin() == null &&
                         profileUpdate.getSearchAgeMax() == null &&
                         profileUpdate.getSearchGender() == null &&
                         profileUpdate.getSearchUniversity() == null &&
-                        profileUpdate.getSearchFaculty() == null)) {
+                        profileUpdate.getSearchFaculty() == null &&
+                        profileUpdate.getLastName() == null &&
+                        profileUpdate.getDateOfBirth() == null
+                )
+        ) {
             throw new IllegalArgumentException("Profile update data is empty or null.");
         }
         Profile profile = profileRepository.findByUserId(userId)
@@ -89,10 +92,6 @@ public class ProfileService {
         // Проверка и обновление полей
         if (!Objects.equals(profileUpdate.getFirstName(), profile.getFirstName())) {
             Optional.ofNullable(profileUpdate.getFirstName()).ifPresent(profile::setFirstName);
-            isUpdated = true;
-        }
-        if (!Objects.equals(profileUpdate.getLastName(), profile.getLastName())) {
-            Optional.ofNullable(profileUpdate.getLastName()).ifPresent(profile::setLastName);
             isUpdated = true;
         }
         if (!Objects.equals(profileUpdate.getDateOfBirth(), profile.getDateOfBirth())) {
@@ -131,14 +130,14 @@ public class ProfileService {
         profileRepository.save(profile);
         ProfileEvent profileEvent = new ProfileEvent();
         BeanUtils.copyProperties(profile, profileEvent);
-//        kafkaProducerService.sendMessage(profileEvent, "profile_update");
+        kafkaProducerService.sendMessage(profileEvent, "profile_update");
         return profile;
     }
 
     @AspectAnnotation
     public Object deleteProfile(UUID userId) {
         profileRepository.deleteByUserId(userId);
-//        kafkaProducerService.sendMessage(userId.toString(), "delete_profile");
+        kafkaProducerService.sendMessage(userId.toString(), "delete_profile");
         return "Success";
     }
 
