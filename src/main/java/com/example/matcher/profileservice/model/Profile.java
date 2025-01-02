@@ -2,10 +2,13 @@ package com.example.matcher.profileservice.model;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.springframework.data.repository.cdi.Eager;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,10 +17,13 @@ import java.util.UUID;
 
 @Data
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private Long id;
     @Column(unique = true, nullable = false)
     private UUID userId;
 
@@ -25,7 +31,9 @@ public class Profile {
     private LocalDate dateOfBirth;
     private Gender gender;
     private String city;
-    private String geoHash;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    private GeoPoint geoPoint;
 
     @Column(unique = true)
     private String email;
@@ -43,21 +51,3 @@ public class Profile {
     private String searchUniversity;
     private String searchFaculty;
 }
-
-//public class UserParam {
-//    private Long id;
-//    private String userUuid;
-//    private String name;
-//    private LocalDate dateOfBirth;
-//    private Byte searchAgeMin;
-//    private Byte searchAgeMax;
-//    private Gender gender;
-//    private Gender searchGender;
-//    private String searchUniversity;
-//    private String university;
-//    private String faculty;
-//    private String searchFaculty;
-//    private String geoHash;
-//    private String city;
-//    private GeoPoint location;
-//}

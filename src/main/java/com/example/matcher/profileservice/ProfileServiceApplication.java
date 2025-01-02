@@ -20,6 +20,8 @@ public class ProfileServiceApplication {
 		System.setProperty("token.signing.key", dotenv.get("TOKEN_SIGNING_KEY"));
 		System.setProperty("aws.access.key", dotenv.get("AWS_ACCESS_KEY"));
 		System.setProperty("aws.secret.key", dotenv.get("AWS_SECRET_KEY"));
+		System.setProperty("aws.s3.my_domain", dotenv.get("AWS_MY_DOMAIN"));
+		System.setProperty("aws.s3.buck_name", dotenv.get("AWS_BUCK_NAME"));
 		SpringApplication.run(ProfileServiceApplication.class, args);
 	}
 

@@ -26,6 +26,8 @@ public class KafkaProducerConfiguration {
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+//        configProps.put("reconnect.backoff.ms", 50000); // Время ожидания перед переподключением
+//        configProps.put("reconnect.backoff.max.ms", 100000); // Максимальное время между попытками
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
@@ -40,6 +42,8 @@ public class KafkaProducerConfiguration {
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+//        configProps.put("reconnect.backoff.ms", 50000); // Время ожидания перед переподключением
+//        configProps.put("reconnect.backoff.max.ms", 100000); // Максимальное время между попытками
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
