@@ -1,13 +1,9 @@
 package com.example.matcher.profileservice.service;
 
 
-import jakarta.annotation.Resource;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,41 +17,45 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-@Service
-@AllArgsConstructor
-public class S3Service {
+import java.util.Objects;
+import java.util.UUID;
 
+@Service
+public class S3Service {
     private final S3Client s3Client;
-    private final String bucketName = "matcherphototest";  // Имя вашего бакета
+    @Value("${aws.s3.buck_name}")
+    private final String BUCK_NAME = "matcherphototest";  // Имя вашего бакета
+
+    @Value("${aws.s3.my_domain}")
+    private String MY_DOMAIN;
     private static final Logger logger = LoggerFactory.getLogger(S3Service.class);
 
+    public S3Service(S3Client s3Client) {
+        this.s3Client = s3Client;
+    }
 
-    public String uploadFile(MultipartFile file) throws IOException {
-        // Временное сохранение файла
-        File tempFile = File.createTempFile("upload-", file.getOriginalFilename());
-        file.transferTo(tempFile);
-        Path filePath = tempFile.toPath();
 
+
+    public String uploadFile(UUID userId, MultipartFile file) throws IOException {
+
+        String uniqueFileName = generateFileName(userId, Objects.requireNonNull(file.getOriginalFilename()));
         // Загружаем файл в S3
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(file.getOriginalFilename())
+                .bucket(BUCK_NAME)
+                .key(uniqueFileName)
                 .acl(ObjectCannedACL.PUBLIC_READ) // Делаем файл публичным
                 .build();
 
-        s3Client.putObject(putObjectRequest, RequestBody.fromFile(tempFile));
+        s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
-        // Удаление временного файла
-        Files.deleteIfExists(filePath);
-
-        return "https://aeb07b27-c9f2-4c95-a16b-72df1b5f62f9.selstorage.ru" + "/" + file.getOriginalFilename();
+        return MY_DOMAIN + "/" + uniqueFileName;
     }
 
     public boolean doesFileExist(String fileName) {
         try {
             // Создаем запрос на получение метаданных файла
             HeadObjectRequest headObjectRequest = HeadObjectRequest.builder()
-                    .bucket(bucketName)  // имя бакета
+                    .bucket(BUCK_NAME)  // имя бакета
                     .key(fileName)       // имя файла
                     .build();
 
@@ -73,7 +73,7 @@ public class S3Service {
     public UrlResource downloadFile(String fileName) throws IOException {
         // Создаем запрос для получения файла
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                .bucket(bucketName)
+                .bucket(BUCK_NAME)
                 .key(fileName)
                 .build();
         // Проверка наличия файла
@@ -112,12 +112,27 @@ public class S3Service {
         return new UrlResource(tempFile.toPath().toUri());
     }
 
-    public void deleteFile(String fileName) {
-        // Удаление файла из S3
+    public void deleteFile(String fileUrl) {
+        String fileName = extractFileName(fileUrl);
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                .bucket(bucketName)
-                .key(fileName)
+                .bucket(BUCK_NAME)
+//                .key(fileName)
+                .key("2024-06-15-161634.jpg")
                 .build();
-        s3Client.deleteObject(deleteObjectRequest);
+        if (doesFileExist(fileName)) {
+            logger.info("Photo DONT delete from s3. fileName: " + fileName);
+        }
+        else {
+            logger.info("Photo delete from s3. Filename: " + fileName);
+        }
+    }
+
+    private String extractFileName(String url) {
+        return url.substring(url.indexOf(MY_DOMAIN) + MY_DOMAIN.length());
+    }
+
+    private String generateFileName(UUID userId, String originalFileName) {
+        String extension = originalFileName.substring(originalFileName.lastIndexOf('.'));
+        return "users/" + userId.toString() + "/photos/" + UUID.randomUUID() + extension;
     }
 }

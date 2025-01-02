@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
+
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/ProfileService/v1/s3")
 @AllArgsConstructor
@@ -22,7 +25,7 @@ public class S3Controller {
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            String result = s3Service.uploadFile(file);
+            String result = s3Service.uploadFile(UUID.randomUUID(),file);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

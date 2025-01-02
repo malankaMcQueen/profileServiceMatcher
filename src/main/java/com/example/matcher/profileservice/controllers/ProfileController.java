@@ -1,5 +1,6 @@
 package com.example.matcher.profileservice.controllers;
 
+import com.example.matcher.profileservice.dto.ProfileCreateDTO;
 import com.example.matcher.profileservice.dto.ProfileUpdateDTO;
 //import com.example.matcher.profileservice.kafka.KafkaProducerService;
 import com.example.matcher.profileservice.model.Profile;
@@ -26,14 +27,13 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @PostMapping("/create")
-    public ResponseEntity<Profile> createProfile(@RequestBody Profile profile, @RequestParam UUID userId) {
+    public ResponseEntity<Profile> createProfile(@RequestBody ProfileCreateDTO profile, @RequestParam UUID userId) {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //        UUID userId = UUID.fromString((String) authentication.getPrincipal()); // UUID будет в качестве principal
-        profile.setUserId(userId);
-        return new ResponseEntity<>(profileService.createProfile(profile), HttpStatus.OK);
+        return new ResponseEntity<>(profileService.createProfile(profile, userId), HttpStatus.OK);
     }
 
-    @PutMapping("/updateProfile")
+    @PatchMapping("/updateProfile")
     public ResponseEntity<Profile> updateProfile(@RequestBody ProfileUpdateDTO profile, @RequestParam UUID userId) {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //        UUID userId = UUID.fromString((String) authentication.getPrincipal()); // UUID будет в качестве principal
@@ -65,7 +65,7 @@ public class ProfileController {
         return new ResponseEntity<>(profileService.addPhotoInProfile(userId, file), HttpStatus.OK);
     }
 
-    @PostMapping("/updateProfile/deletePhoto")
+    @DeleteMapping("/updateProfile/deletePhoto")
     public ResponseEntity<List<String>> deletePhotoInProfile(@RequestParam UUID userId, String link) {
         return new ResponseEntity<>(profileService.deletePhotoInProfile(userId, link), HttpStatus.OK);
     }
