@@ -2,22 +2,22 @@ package com.example.matcher.profileservice.service;
 
 import com.example.matcher.profileservice.aspect.AspectAnnotation;
 import com.example.matcher.profileservice.dto.ProfileCreateDTO;
-import com.example.matcher.profileservice.dto.ProfileEvent;
+import com.example.matcher.profileservice.dto.kafkaEvent.ProfileEvent;
 
 import com.example.matcher.profileservice.dto.ProfileUpdateDTO;
 import com.example.matcher.profileservice.exception.BadRequestException;
 import com.example.matcher.profileservice.exception.ResourceNotFoundException;
 import com.example.matcher.profileservice.exception.UserAlreadyExistException;
-//import com.example.matcher.profileservice.kafka.KafkaProducerService;
 import com.example.matcher.profileservice.kafka.KafkaProducerService;
 import com.example.matcher.profileservice.model.Profile;
 import com.example.matcher.profileservice.repository.ProfileRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.BeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -25,6 +25,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import static com.example.matcher.profileservice.service.ImageProcessor.processImageWithThumbnailator;
 
 @Service
 @AllArgsConstructor
@@ -35,6 +37,8 @@ public class ProfileService {
     private final GeoHashService geoHashService;
 
     private final KafkaProducerService kafkaProducerService;
+
+    private static final Logger logger = LoggerFactory.getLogger(S3Service.class);
 
     public Profile createProfile(ProfileCreateDTO profileCreateDTO, UUID userId) {
         profileRepository.findByUserId(userId).ifPresent(existingProfile -> {
@@ -53,14 +57,11 @@ public class ProfileService {
                 .build();
 
         profile = profileRepository.save(profile);
-        ProfileEvent profileEvent = new ProfileEvent();
-        profileEvent = ProfileEvent.fromProfile(profile);
-
+        ProfileEvent profileEvent = ProfileEvent.fromProfile(profile);
         kafkaProducerService.sendMessage(profileEvent, "create_profile");
         return profileRepository.save(profile);
     }
 
-    @Transactional
     public List<String> addPhotoInProfile(UUID userId, MultipartFile file) throws IOException {
         Profile profile = profileRepository.findByUserId(userId).orElseThrow(()
                 -> new ResourceNotFoundException("User not found."));
@@ -68,7 +69,12 @@ public class ProfileService {
         if (photoLinks.size() >= 6) {
             throw new BadRequestException("Photo max size 6");
         }
-        String link = s3Service.uploadFile(userId, file);
+        // Обработка изображения
+        File processedFile = processImageWithThumbnailator(file);
+        String link = s3Service.uploadFile(userId, processedFile);
+        if (!processedFile.delete()) {
+            logger.warn("Failed to delete temporary processed file: " + processedFile.getAbsolutePath());
+        }
         photoLinks.add(link);
         profile.setPhotoLinks(photoLinks);
         profileRepository.save(profile);
@@ -79,9 +85,9 @@ public class ProfileService {
         Profile profile = profileRepository.findByUserId(userId).orElseThrow(()
                 -> new ResourceNotFoundException("Пользователь с данным ID не найден."));
         List<String> photoLinks = profile.getPhotoLinks();
-//        if (!photoLinks.contains(link)) {
-//            throw new ResourceNotFoundException("Link not found");
-//        }
+        if (!photoLinks.contains(link)) {
+            throw new ResourceNotFoundException("Link not found");
+        }
         photoLinks.remove(link);
         profile.setPhotoLinks(photoLinks);
         profileRepository.save(profile);
@@ -115,22 +121,23 @@ public class ProfileService {
         // Сохранение изменений
         profileRepository.save(profile);
         // Отправка события через Kafka
-        ProfileEvent profileEvent = new ProfileEvent();
-        profileEvent = ProfileEvent.fromProfile(profile);
+        ProfileEvent profileEvent = ProfileEvent.fromProfile(profile);
         kafkaProducerService.sendMessage(profileEvent, "profile_update");
         return profile;
     }
 
     private boolean isProfileUpdateDTOEmpty(ProfileUpdateDTO profileUpdate) {
         return profileUpdate == null || (
-                profileUpdate.getFirstName() == null &&
-                        profileUpdate.getDateOfBirth() == null &&
-                        profileUpdate.getCity() == null &&
+                profileUpdate.getCity() == null &&
                         profileUpdate.getSearchAgeMin() == null &&
                         profileUpdate.getSearchAgeMax() == null &&
-                        profileUpdate.getSearchGender() == null &&
                         profileUpdate.getSearchUniversity() == null &&
-                        profileUpdate.getSearchFaculty() == null
+                        profileUpdate.getSearchFaculty() == null &&
+                        profileUpdate.getSearchGender() == null &&
+                        profileUpdate.getFirstName() == null &&
+                        profileUpdate.getDateOfBirth() == null &&
+                        profileUpdate.getUniversity() == null &&
+                        profileUpdate.getFaculty() == null
         );
     }
 
