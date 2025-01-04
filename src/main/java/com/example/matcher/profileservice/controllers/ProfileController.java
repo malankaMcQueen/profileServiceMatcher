@@ -2,15 +2,11 @@ package com.example.matcher.profileservice.controllers;
 
 import com.example.matcher.profileservice.dto.ProfileCreateDTO;
 import com.example.matcher.profileservice.dto.ProfileUpdateDTO;
-//import com.example.matcher.profileservice.kafka.KafkaProducerService;
 import com.example.matcher.profileservice.model.Profile;
 import com.example.matcher.profileservice.service.ProfileService;
-import com.example.matcher.profileservice.service.S3Service;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,7 +57,7 @@ public class ProfileController {
     }
 
     @PostMapping("/updateProfile/addPhoto")
-    public ResponseEntity<List<String>> addPhotoInProfile(@RequestParam UUID userId, @RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<List<String>> addPhotoInProfile(@RequestParam UUID userId, @RequestParam("file") MultipartFile file) throws IOException{
         return new ResponseEntity<>(profileService.addPhotoInProfile(userId, file), HttpStatus.OK);
     }
 

@@ -1,6 +1,6 @@
 package com.example.matcher.profileservice.configuration.kafka;
 
-import com.example.matcher.profileservice.dto.ProfileEvent;
+import com.example.matcher.profileservice.dto.kafkaEvent.ProfileEvent;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;

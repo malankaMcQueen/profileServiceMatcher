@@ -1,4 +1,4 @@
-package com.example.matcher.profileservice.dto;
+package com.example.matcher.profileservice.dto.kafkaEvent;
 
 import com.example.matcher.profileservice.model.Gender;
 import com.example.matcher.profileservice.model.GeoPoint;

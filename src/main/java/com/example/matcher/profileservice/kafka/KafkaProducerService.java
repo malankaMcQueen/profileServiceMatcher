@@ -1,6 +1,6 @@
 package com.example.matcher.profileservice.kafka;
 
-import com.example.matcher.profileservice.dto.ProfileEvent;
+import com.example.matcher.profileservice.dto.kafkaEvent.ProfileEvent;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

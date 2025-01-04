@@ -8,10 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
 
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/ProfileService/v1/s3")
@@ -22,16 +20,7 @@ public class S3Controller {
     private final S3Service s3Service;
 
     // Загрузка файла
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
-        try {
-            String result = s3Service.uploadFile(UUID.randomUUID(),file);
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("File upload failed: " + e.getMessage());
-        }
-    }
+
 
     // Получение файла по имени
     @GetMapping("/download/{fileName}")

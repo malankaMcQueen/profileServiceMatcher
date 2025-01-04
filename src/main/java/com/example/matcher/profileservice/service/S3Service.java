@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -35,18 +33,18 @@ public class S3Service {
     }
 
 
+    public String uploadFile(UUID userId, File file) {
+        String uniqueFileName = generateFileName(userId, file.getName());
 
-    public String uploadFile(UUID userId, MultipartFile file) throws IOException {
-
-        String uniqueFileName = generateFileName(userId, Objects.requireNonNull(file.getOriginalFilename()));
         // Загружаем файл в S3
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(BUCK_NAME)
                 .key(uniqueFileName)
-                .acl(ObjectCannedACL.PUBLIC_READ) // Делаем файл публичным
+                .acl(ObjectCannedACL.PUBLIC_READ)
+                .contentType("image/jpeg")
                 .build();
 
-        s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+        s3Client.putObject(putObjectRequest, RequestBody.fromFile(file));
 
         return MY_DOMAIN + "/" + uniqueFileName;
     }
@@ -70,6 +68,7 @@ public class S3Service {
             return false;
         }
     }
+
     public UrlResource downloadFile(String fileName) throws IOException {
         // Создаем запрос для получения файла
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
@@ -116,13 +115,12 @@ public class S3Service {
         String fileName = extractFileName(fileUrl);
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(BUCK_NAME)
-//                .key(fileName)
-                .key("2024-06-15-161634.jpg")
+                .key(fileName)
                 .build();
+        s3Client.deleteObject(deleteObjectRequest);
         if (doesFileExist(fileName)) {
             logger.info("Photo DONT delete from s3. fileName: " + fileName);
-        }
-        else {
+        } else {
             logger.info("Photo delete from s3. Filename: " + fileName);
         }
     }
