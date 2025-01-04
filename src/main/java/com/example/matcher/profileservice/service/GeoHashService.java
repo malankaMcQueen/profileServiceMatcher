@@ -5,12 +5,14 @@ import ch.hsr.geohash.WGS84Point;
 import com.example.matcher.profileservice.model.GeoPoint;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Locale;
 
 @Service
+@AllArgsConstructor
 public class GeoHashService {
 
     private final RestTemplate restTemplate = new RestTemplate();
