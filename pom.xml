@@ -45,13 +45,6 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
-
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.boot</groupId>-->
-<!--			<artifactId>spring-boot-devtools</artifactId>-->
-<!--			<scope>runtime</scope>-->
-<!--			<optional>true</optional>-->
-<!--		</dependency>-->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
@@ -102,10 +95,15 @@
 			<artifactId>thumbnailator</artifactId>
 			<version>0.4.20</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+		</dependency>
+		<!-- Lettuce client (включается автоматически с spring-data-redis) -->
 <!--		<dependency>-->
-<!--			<groupId>org.springframework.cloud</groupId>-->
-<!--			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>-->
-<!--			<version>4.1.2</version>-->
+<!--			<groupId>io.lettuce.core</groupId>-->
+<!--			<artifactId>lettuce-core</artifactId>-->
 <!--		</dependency>-->
 
 		<dependency>
@@ -123,25 +121,6 @@
 			<artifactId>dotenv-java</artifactId>
 			<version>3.0.2</version>
 		</dependency>
-
-		<!--		<dependency>-->
-<!--			<groupId>com.amazonaws</groupId>-->
-<!--			<artifactId>aws-java-sdk</artifactId>-->
-<!--			<version>1.12.62</version>-->
-<!--		</dependency>-->
-
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.cloud</groupId>-->
-<!--			<artifactId>spring-cloud-starter-aws</artifactId>-->
-<!--			<version>2.3.4</version>-->
-<!--		</dependency>-->
-
-		<!--		<dependency>-->
-<!--			<groupId>software.amazon.awssdk</groupId>-->
-<!--			<artifactId>s3</artifactId>-->
-<!--			<version>2.20.101</version> &lt;!&ndash; Укажи конкретную версию &ndash;&gt;-->
-<!--		</dependency>-->
-
 
 	</dependencies>
 
