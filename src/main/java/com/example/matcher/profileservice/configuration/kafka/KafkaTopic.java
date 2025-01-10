@@ -11,12 +11,18 @@ public class KafkaTopic {
     public NewTopic topic1() {
         return TopicBuilder.name("delete_profile").build();
     }
+
     @Bean
     public NewTopic topic2() {
         return TopicBuilder.name("create_profile").build();
     }
+
     @Bean
     public NewTopic topic3() {
         return TopicBuilder.name("update_profile").build();
+    }
+
+    public NewTopic topic4() {
+        return TopicBuilder.name("status_connection_update").build();
     }
 }
