@@ -3,7 +3,10 @@ package com.example.matcher.profileservice.controllers;
 import com.example.matcher.profileservice.dto.ProfileCreateDTO;
 import com.example.matcher.profileservice.dto.ProfileUpdateDTO;
 import com.example.matcher.profileservice.model.Profile;
+import com.example.matcher.profileservice.model.StatusConnection;
+import com.example.matcher.profileservice.model.StatusConnectionUpdate;
 import com.example.matcher.profileservice.service.ProfileService;
+import com.example.matcher.profileservice.service.StatusConnectionService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,7 @@ import java.util.UUID;
 public class ProfileController {
 
     private final ProfileService profileService;
+    private final StatusConnectionService statusConnectionService;
 
     @PostMapping("/create")
     public ResponseEntity<Profile> createProfile(@RequestBody ProfileCreateDTO profile, @RequestParam UUID userId) {
@@ -47,6 +51,16 @@ public class ProfileController {
     @GetMapping()
     public ResponseEntity<List<Profile>> getAllProfiles() {
         return new ResponseEntity<>(profileService.getAllProfiles(), HttpStatus.OK);
+    }
+
+    @GetMapping("/statusUsers")
+    public ResponseEntity<List<StatusConnectionUpdate>> getUserStatus() {
+        return new ResponseEntity<>(statusConnectionService.getAllOnlineUsers(), HttpStatus.OK);
+    }
+    @PostMapping("/statusUsers/update")
+    public void updateConnectionStatus(@RequestBody StatusConnectionUpdate statusConnectionUpdate) {
+        statusConnectionService.statusConnectionUpdate(statusConnectionUpdate);
+        return;
     }
 
     @GetMapping("/myProfile")
