@@ -100,6 +100,11 @@
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-redis</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+
 		<!-- Lettuce client (включается автоматически с spring-data-redis) -->
 <!--		<dependency>-->
 <!--			<groupId>io.lettuce.core</groupId>-->
