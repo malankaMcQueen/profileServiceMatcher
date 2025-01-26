@@ -21,5 +21,11 @@ public class EnvironmentLoader {
                 .or(() -> Optional.ofNullable(dotenv.get(key))) // Проверка .env
                 .orElse(null); // Если ничего не найдено, вернуть null
     }
+
+    public static String get(String key, String defaultValue) {
+        return Optional.ofNullable(System.getenv(key)) // Проверка системных переменных
+                .or(() -> Optional.ofNullable(dotenv.get(key))) // Проверка .env
+                .orElse(defaultValue); // Если ничего не найдено, вернуть значение по умолчанию
+    }
 }
 
