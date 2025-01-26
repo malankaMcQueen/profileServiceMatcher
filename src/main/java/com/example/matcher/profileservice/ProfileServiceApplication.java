@@ -3,14 +3,14 @@ package com.example.matcher.profileservice;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-//import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.scheduling.annotation.EnableAsync;
 //import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableAsync
 //@EnableScheduling
-//@EnableDiscoveryClient
+@EnableDiscoveryClient
 public class ProfileServiceApplication {
 	public static void main(String[] args) {
 		Dotenv dotenv = Dotenv.load(); // Загружаем переменные из .env
