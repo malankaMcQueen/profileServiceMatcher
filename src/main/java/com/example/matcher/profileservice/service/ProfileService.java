@@ -46,17 +46,10 @@ public class ProfileService {
         profileRepository.findByUserId(userId).ifPresent(existingProfile -> {
             throw new UserAlreadyExistException("Профиль для данного пользователя уже существует.");
         });
-        Profile profile = Profile.builder()
-                .userId(userId)
-                .firstName(profileCreateDTO.getFirstName())
-                .city(profileCreateDTO.getCity())
-                .dateOfBirth(profileCreateDTO.getDateOfBirth())
-                .gender(profileCreateDTO.getGender())
-                .email(profileCreateDTO.getEmail())
-                .university(profileCreateDTO.getUniversity())
-                .faculty(profileCreateDTO.getFaculty())
-                .geoPoint(geoHashService.decodeGeoHash(profileCreateDTO.getGeoHash()))
-                .build();
+
+        Profile profile = ProfileCreateDTO.profileFromDTO(profileCreateDTO);
+        profile.setUserId(userId);
+        profile.setGeoPoint(geoHashService.decodeGeoHash(profileCreateDTO.getGeoHash()));
 
         profile = profileRepository.save(profile);
         ProfileCreateForKafka profileCreateForKafka = ProfileCreateForKafka.fromProfile(profile);
