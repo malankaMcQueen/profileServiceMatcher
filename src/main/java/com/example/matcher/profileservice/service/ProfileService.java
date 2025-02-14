@@ -2,9 +2,11 @@ package com.example.matcher.profileservice.service;
 
 import com.example.matcher.profileservice.aspect.AspectAnnotation;
 import com.example.matcher.profileservice.dto.ProfileCreateDTO;
+import com.example.matcher.profileservice.dto.kafkaEvent.ProfileCreateForKafka;
 import com.example.matcher.profileservice.dto.kafkaEvent.ProfileEvent;
 
 import com.example.matcher.profileservice.dto.ProfileUpdateDTO;
+import com.example.matcher.profileservice.dto.kafkaEvent.ProfileUpdateForKafka;
 import com.example.matcher.profileservice.exception.BadRequestException;
 import com.example.matcher.profileservice.exception.ResourceNotFoundException;
 import com.example.matcher.profileservice.exception.UserAlreadyExistException;
@@ -50,8 +52,8 @@ public class ProfileService {
         profile.setGeoPoint(geoHashService.decodeGeoHash(profileCreateDTO.getGeoHash()));
 
         profile = profileRepository.save(profile);
-        ProfileEvent profileEvent = ProfileEvent.fromProfile(profile);
-        kafkaProducerService.sendMessage(profileEvent, "create_profile");
+        ProfileCreateForKafka profileCreateForKafka = ProfileCreateForKafka.fromProfile(profile);
+        kafkaProducerService.sendMessage(profileCreateForKafka, "create_profile");
         return profileRepository.save(profile);
     }
 
@@ -114,8 +116,8 @@ public class ProfileService {
         // Сохранение изменений
         profileRepository.save(profile);
         // Отправка события через Kafka
-        ProfileEvent profileEvent = ProfileEvent.fromProfile(profile);
-        kafkaProducerService.sendMessage(profileEvent, "profile_update");
+        ProfileUpdateForKafka profileEvent = ProfileUpdateForKafka.fromProfile(profile);
+        kafkaProducerService.sendMessage(profileEvent, "update_profile");
         return profile;
     }
 
