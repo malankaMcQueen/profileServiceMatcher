@@ -94,7 +94,7 @@ public class ProfileService {
     public Profile updateProfile(UUID userId, ProfileUpdateDTO profileUpdate) {
         // Проверка, что DTO не пустое
         if (isProfileUpdateDTOEmpty(profileUpdate)) {
-            throw new IllegalArgumentException("Profile update data is empty or null.");
+            throw new BadRequestException("Profile update data is empty or null.");
         }
         // Получение профиля пользователя
         Profile profile = profileRepository.findByUserId(userId)
@@ -111,7 +111,7 @@ public class ProfileService {
 
         // Если изменений не было
         if (!isUpdated) {
-            throw new IllegalArgumentException("No updates were made. The provided data matches the current profile.");
+            throw new BadRequestException("No updates were made. The provided data matches the current profile.");
         }
         // Сохранение изменений
         profileRepository.save(profile);
