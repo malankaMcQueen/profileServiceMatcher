@@ -26,11 +26,11 @@ public class ProfileUpdateForKafka {
     private Byte searchAgeMax;
     private Gender searchGender;
 
-    private String university;
-    private String faculty;
-
-    private String searchUniversity;
-    private String searchFaculty;
+//    private String university;
+//    private String faculty;
+//
+//    private String searchUniversity;
+//    private String searchFaculty;
 
     public static ProfileUpdateForKafka fromProfile(Profile profile) {
         return ProfileUpdateForKafka.builder()
@@ -42,10 +42,10 @@ public class ProfileUpdateForKafka {
                 .searchAgeMin(profile.getSearchAgeMin())
                 .searchAgeMax(profile.getSearchAgeMax())
                 .searchGender(profile.getSearchGender())
-                .university(profile.getUniversity())
-                .faculty(profile.getFaculty())
-                .searchUniversity(profile.getSearchUniversity())
-                .searchFaculty(profile.getSearchFaculty())
+//                .university(profile.getUniversity())
+//                .faculty(profile.getFaculty())
+//                .searchUniversity(profile.getSearchUniversity())
+//                .searchFaculty(profile.getSearchFaculty())
                 .build();
     }
 
