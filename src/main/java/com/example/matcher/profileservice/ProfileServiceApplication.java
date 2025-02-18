@@ -21,6 +21,8 @@ public class ProfileServiceApplication {
 		System.setProperty("aws.s3.my_domain", EnvironmentLoader.get("AWS_MY_DOMAIN"));
 		System.setProperty("aws.s3.buck_name", EnvironmentLoader.get("AWS_BUCK_NAME"));
 
+		System.setProperty("student.card.hash.secret", EnvironmentLoader.get("STUDENT_CARD_HASH_SECRET"));
+
 		System.setProperty("spring.kafka.bootstrap-servers", EnvironmentLoader.get("SPRING_KAFKA_BOOTSTRAP_SERVERS", "http://localhost:9092"));
 		System.setProperty("eureka.client.service-url.defaultZone", EnvironmentLoader.get("EUREKA_DEFAULT_ZONE", "http://localhost:8761/eureka/"));
 		System.setProperty("spring.jpa.hibernate.ddl-auto", EnvironmentLoader.get("SPRING_JPA_HIBERNATE_DDL_AUTO", "update"));

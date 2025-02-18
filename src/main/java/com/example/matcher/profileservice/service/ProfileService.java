@@ -49,7 +49,7 @@ public class ProfileService {
 
         Profile profile = ProfileCreateDTO.profileFromDTO(profileCreateDTO);
         profile.setUserId(userId);
-        profile.setGeoPoint(geoHashService.decodeGeoHash(profileCreateDTO.getGeoHash()));
+        profile.setIsStudent(false);
 
         profile = profileRepository.save(profile);
         ProfileCreateForKafka profileCreateForKafka = ProfileCreateForKafka.fromProfile(profile);
@@ -105,9 +105,9 @@ public class ProfileService {
                 | updateField(profileUpdate.getCity(), profile::getCity, profile::setCity)
                 | updateField(profileUpdate.getSearchAgeMin(), profile::getSearchAgeMin, profile::setSearchAgeMin)
                 | updateField(profileUpdate.getSearchAgeMax(), profile::getSearchAgeMax, profile::setSearchAgeMax)
-                | updateField(profileUpdate.getSearchGender(), profile::getSearchGender, profile::setSearchGender)
-                | updateField(profileUpdate.getSearchUniversity(), profile::getSearchUniversity, profile::setSearchUniversity)
-                | updateField(profileUpdate.getSearchFaculty(), profile::getSearchFaculty, profile::setSearchFaculty);
+                | updateField(profileUpdate.getSearchGender(), profile::getSearchGender, profile::setSearchGender);
+//                | updateField(profileUpdate.getSearchUniversity(), profile::getSearchUniversity, profile::setSearchUniversity)
+//                | updateField(profileUpdate.getSearchFaculty(), profile::getSearchFaculty, profile::setSearchFaculty);
 
         // Если изменений не было
         if (!isUpdated) {
@@ -126,13 +126,13 @@ public class ProfileService {
                 profileUpdate.getCity() == null &&
                         profileUpdate.getSearchAgeMin() == null &&
                         profileUpdate.getSearchAgeMax() == null &&
-                        profileUpdate.getSearchUniversity() == null &&
-                        profileUpdate.getSearchFaculty() == null &&
+//                        profileUpdate.getSearchUniversity() == null &&
+//                        profileUpdate.getSearchFaculty() == null &&
                         profileUpdate.getSearchGender() == null &&
                         profileUpdate.getFirstName() == null &&
-                        profileUpdate.getDateOfBirth() == null &&
-                        profileUpdate.getUniversity() == null &&
-                        profileUpdate.getFaculty() == null
+                        profileUpdate.getDateOfBirth() == null
+//                        profileUpdate.getUniversity() == null &&
+//                        profileUpdate.getFaculty() == null
         );
     }
 

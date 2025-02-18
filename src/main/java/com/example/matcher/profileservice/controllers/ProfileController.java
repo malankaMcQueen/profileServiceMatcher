@@ -2,9 +2,11 @@ package com.example.matcher.profileservice.controllers;
 
 import com.example.matcher.profileservice.dto.ProfileCreateDTO;
 import com.example.matcher.profileservice.dto.ProfileUpdateDTO;
+import com.example.matcher.profileservice.dto.StudentConfirmationDTO;
 import com.example.matcher.profileservice.model.Profile;
 import com.example.matcher.profileservice.model.StatusConnection;
 import com.example.matcher.profileservice.model.StatusConnectionUpdate;
+import com.example.matcher.profileservice.repository.ProfileRepository;
 import com.example.matcher.profileservice.service.ProfileService;
 import com.example.matcher.profileservice.service.StatusConnectionService;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -29,6 +31,15 @@ public class ProfileController {
 
     private final ProfileService profileService;
     private final StatusConnectionService statusConnectionService;
+private final ProfileRepository profileRepository;
+    @PostMapping("/test")
+    public ResponseEntity<Profile> createProfileTest(@RequestBody Profile profile, @RequestParam UUID userId) {
+        profile.setUserId(userId);
+        profile.getStudentFields().setProfile(profile);
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        UUID userId = UUID.fromString((String) authentication.getPrincipal()); // UUID будет в качестве principal
+        return new ResponseEntity<>(profileRepository.save(profile), HttpStatus.OK);
+    }
 
     @Operation(summary = "Создание профиля",
             description = "Метод создания профиля")
@@ -51,6 +62,9 @@ public class ProfileController {
 //        UUID userId = UUID.fromString((String) authentication.getPrincipal()); // UUID будет в качестве principal
         return new ResponseEntity<>(profileService.updateProfile(userId, profile), HttpStatus.OK);
     }
+
+
+
 
     @Operation(summary = "Удалить профиль",
             description = "Метод удаляет профиль")

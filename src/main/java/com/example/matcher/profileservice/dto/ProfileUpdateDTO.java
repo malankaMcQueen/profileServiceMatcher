@@ -11,13 +11,8 @@ public class ProfileUpdateDTO {
     private LocalDate dateOfBirth;
     private String city;
 
-    private String university;
-    private String faculty;
-
     private Byte searchAgeMin;
     private Byte searchAgeMax;
     private Gender searchGender;
-
-    private String searchUniversity;
-    private String searchFaculty;
+    private String geoHash;
 }

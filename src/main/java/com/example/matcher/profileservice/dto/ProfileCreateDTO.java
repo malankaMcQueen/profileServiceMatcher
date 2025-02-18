@@ -12,22 +12,15 @@ public class ProfileCreateDTO {
     private String firstName;
     private LocalDate dateOfBirth;
     private Gender gender;
-    private String city;
-    private String geoHash;
     @Column(unique = true)
     private String email;
-    private String university;
-    private String faculty;
 
     public static Profile profileFromDTO(ProfileCreateDTO profileCreateDTO) {
         return Profile.builder()
                 .firstName(profileCreateDTO.getFirstName())
-                .city(profileCreateDTO.getCity())
                 .dateOfBirth(profileCreateDTO.getDateOfBirth())
                 .gender(profileCreateDTO.getGender())
                 .email(profileCreateDTO.getEmail())
-                .university(profileCreateDTO.getUniversity())
-                .faculty(profileCreateDTO.getFaculty())
                 .build();
     }
 }

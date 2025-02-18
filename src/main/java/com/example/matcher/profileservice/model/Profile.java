@@ -45,9 +45,16 @@ public class Profile {
     private Byte searchAgeMax;
     private Gender searchGender;
 
-    private String university;
-    private String faculty;
+    private Boolean isStudent = false;
 
-    private String searchUniversity;
-    private String searchFaculty;
+    @OneToOne(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private StudentFields studentFields;
+
+//    private boolean isStudent;
+
+//    private String university;
+//    private String faculty;
+//
+//    private String searchUniversity;
+//    private String searchFaculty;
 }

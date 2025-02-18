@@ -16,10 +16,6 @@ public class ProfileCreateForKafka {
     private UUID userId;
     private LocalDate dateOfBirth;
     private Gender gender;
-    private String city;
-    private GeoPoint geoPoint;
-    private String university;
-    private String faculty;
 
     public static ProfileCreateForKafka fromProfile(Profile profile) {
         return ProfileCreateForKafka.builder()
@@ -27,10 +23,6 @@ public class ProfileCreateForKafka {
                 .userId(profile.getUserId())
                 .dateOfBirth(profile.getDateOfBirth())
                 .gender(profile.getGender())
-                .city(profile.getCity())
-                .geoPoint(profile.getGeoPoint())
-                .university(profile.getUniversity())
-                .faculty(profile.getFaculty())
                 .build();
     }
 }
