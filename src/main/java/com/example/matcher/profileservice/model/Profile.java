@@ -45,6 +45,7 @@ public class Profile {
     private Byte searchAgeMax;
     private Gender searchGender;
 
+    private Boolean activeInSearch = false;
     private Boolean isStudent = false;
 
     @OneToOne(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
