@@ -30,4 +30,6 @@ public class StudentController {
 //        UUID userId = UUID.fromString((String) authentication.getPrincipal()); // UUID будет в качестве principal
         return new ResponseEntity<>(studentService.studentConfirmation(userId, studentConfirmation), HttpStatus.OK);
     }
+
+
 }

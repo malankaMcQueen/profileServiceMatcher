@@ -1,12 +1,8 @@
 package com.example.matcher.profileservice.controllers;
 
-import com.example.matcher.profileservice.dto.ProfileCreateDTO;
-import com.example.matcher.profileservice.dto.ProfileUpdateDTO;
-import com.example.matcher.profileservice.dto.StudentConfirmationDTO;
+import com.example.matcher.profileservice.dto.*;
 import com.example.matcher.profileservice.model.Profile;
-import com.example.matcher.profileservice.model.StatusConnection;
 import com.example.matcher.profileservice.model.StatusConnectionUpdate;
-import com.example.matcher.profileservice.repository.ProfileRepository;
 import com.example.matcher.profileservice.service.ProfileService;
 import com.example.matcher.profileservice.service.StatusConnectionService;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -31,22 +27,13 @@ public class ProfileController {
 
     private final ProfileService profileService;
     private final StatusConnectionService statusConnectionService;
-private final ProfileRepository profileRepository;
-    @PostMapping("/test")
-    public ResponseEntity<Profile> createProfileTest(@RequestBody Profile profile, @RequestParam UUID userId) {
-        profile.setUserId(userId);
-        profile.getStudentFields().setProfile(profile);
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        UUID userId = UUID.fromString((String) authentication.getPrincipal()); // UUID будет в качестве principal
-        return new ResponseEntity<>(profileRepository.save(profile), HttpStatus.OK);
-    }
 
     @Operation(summary = "Создание профиля",
             description = "Метод создания профиля")
     @ApiResponse(responseCode = "200", description = "Успешный ответ")
     @ApiResponse(responseCode = "409", description = "Профиль с таким UUID существует", content = @Content())
     @PostMapping("/create")
-    public ResponseEntity<Profile> createProfile(@RequestBody ProfileCreateDTO profile, @RequestParam UUID userId) {
+    public ResponseEntity<ProfileResponse> createProfile(@RequestBody ProfileCreateDTO profile, @RequestParam UUID userId) {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //        UUID userId = UUID.fromString((String) authentication.getPrincipal()); // UUID будет в качестве principal
         return new ResponseEntity<>(profileService.createProfile(profile, userId), HttpStatus.OK);
@@ -57,13 +44,11 @@ private final ProfileRepository profileRepository;
     @ApiResponse(responseCode = "404", description = "Профиль не найден", content = @Content())
     @ApiResponse(responseCode = "400", description = "Неправильный запрос (тело запроса пустое/обновлений нет)", content = @Content())
     @PatchMapping("/updateProfile")
-    public ResponseEntity<Profile> updateProfile(@RequestBody ProfileUpdateDTO profile, @RequestParam UUID userId) {
+    public ResponseEntity<ProfileResponse> updateProfile(@RequestBody ProfileUpdateDTO profile, @RequestParam UUID userId) {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //        UUID userId = UUID.fromString((String) authentication.getPrincipal()); // UUID будет в качестве principal
         return new ResponseEntity<>(profileService.updateProfile(userId, profile), HttpStatus.OK);
     }
-
-
 
 
     @Operation(summary = "Удалить профиль",
@@ -95,14 +80,13 @@ private final ProfileRepository profileRepository;
     @PostMapping("/statusUsers/update")
     public void updateConnectionStatus(@RequestBody StatusConnectionUpdate statusConnectionUpdate) {
         statusConnectionService.statusConnectionUpdate(statusConnectionUpdate);
-        return;
     }
 
     @Operation(summary = "Получить профиль с UUID:",
             description = "")
     @ApiResponse(responseCode = "200", description = "Успешный ответ")
     @GetMapping("/{userId}")
-    public ResponseEntity<Profile> getProfile(@PathVariable UUID userId) {
+    public ResponseEntity<ProfileResponse> getProfile(@PathVariable UUID userId) {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //        UUID userId = UUID.fromString((String) authentication.getPrincipal()); // UUID будет в качестве principal
         return new ResponseEntity<>(profileService.getProfileByUserId(userId), HttpStatus.OK);
@@ -125,5 +109,15 @@ private final ProfileRepository profileRepository;
     @DeleteMapping("/updateProfile/deletePhoto")
     public ResponseEntity<List<String>> deletePhotoInProfile(@RequestParam UUID userId, String link) {
         return new ResponseEntity<>(profileService.deletePhotoInProfile(userId, link), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Получить список профилей по списку UUID:",
+            description = "")
+    @ApiResponse(responseCode = "200", description = "Успешный ответ")
+    @GetMapping("/list")
+    public ResponseEntity<List<ProfileSelectionResponse>> getProfile(@RequestBody UserIdsRequest userIds) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        UUID userId = UUID.fromString((String) authentication.getPrincipal()); // UUID будет в качестве principal
+        return new ResponseEntity<>(profileService.getListProfiles(userIds), HttpStatus.OK);
     }
 }
