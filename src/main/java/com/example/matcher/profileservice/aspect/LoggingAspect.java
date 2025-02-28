@@ -15,9 +15,6 @@ import java.util.Arrays;
 @Component
 public class LoggingAspect {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingAspect.class);
-    @Pointcut("execution(* by.bsuir.daniil.hockey_schedule.service.*.*(..))")
-    private void allServiceMethods() { }
-
     @Pointcut("@annotation(AspectAnnotation)")
     public void callAtMyServiceAnnotation() { }
 
