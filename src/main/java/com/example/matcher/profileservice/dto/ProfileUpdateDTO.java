@@ -14,5 +14,5 @@ public class ProfileUpdateDTO {
     private Byte searchAgeMin;
     private Byte searchAgeMax;
     private Gender searchGender;
-    private String geoHash;
+    private StudentUpdateFields studentFields;
 }

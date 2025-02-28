@@ -36,7 +36,7 @@ public class StudentService {
                 -> new ResourceNotFoundException("User not found"));
         // todo логика проверки студент ли
         StudentFields studentFields = StudentConfirmationDTO.studentFieldsFromDTO(studentConfirmation);
-        // todo Изменить логику хеширования
+
         String studentIdCardHash = hmacSha256(studentConfirmation.getUniversity() + studentConfirmation.getStudentIdCard());
 
         if (studentRepository.existsByStudentIdCardHash(studentIdCardHash)) {
@@ -45,7 +45,7 @@ public class StudentService {
         studentFields.setStudentIdCardHash(studentIdCardHash);
 
         studentFields.setProfile(profile);
-        // todo Сохранение одной транзакцией
+
         profile.setStudentFields(studentFields);
         profile.setIsStudent(true);
 
