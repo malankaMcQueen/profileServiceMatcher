@@ -4,7 +4,6 @@ import com.example.matcher.profileservice.dto.ProfileUpdateDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -29,7 +28,8 @@ public final class ProfileUtils {
 
     public static <T> boolean updateField(T newValue, Supplier<T> getter, Consumer<T> setter) {
         if (!Objects.equals(newValue, getter.get())) {
-            Optional.ofNullable(newValue).ifPresent(setter);
+//            Optional.ofNullable(newValue).ifPresent(setter);
+            setter.accept(newValue);
             return true; // Было обновление
         }
         return false; // Обновления не было

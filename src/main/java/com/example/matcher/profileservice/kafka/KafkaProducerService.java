@@ -1,8 +1,6 @@
 package com.example.matcher.profileservice.kafka;
 
 import com.example.matcher.profileservice.dto.kafkaEvent.ProfileCreateForKafka;
-import com.example.matcher.profileservice.dto.kafkaEvent.ProfileEvent;
-import com.example.matcher.profileservice.dto.kafkaEvent.ProfileUpdateForKafka;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +25,7 @@ public class KafkaProducerService {
         logger.info("[KAFKA] SEND MESSAGE: " + profileEvent);
         profileEventKafkaTemplate.send(topicName, profileEvent);
     }
-    public void sendMessage(ProfileUpdateForKafka profileEvent, String topicName) {
+    public void sendMessage(Object profileEvent, String topicName) {
         logger.info("[KAFKA] SEND MESSAGE: " + profileEvent);
         profileEventKafkaTemplate.send(topicName, profileEvent);
     }

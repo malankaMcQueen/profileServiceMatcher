@@ -121,14 +121,27 @@ public class ProfileService {
             return ProfileResponse.fromProfile(profile);
         }
 
+        boolean activityBeforeUpdate = profile.getActiveInSearch();
         profile.setActiveInSearch(profileIsReadyForSearch(profile));
         profileRepository.save(profile);
 
-        // todo Просмотреть логику отправки через кафку когда активный/не активный профиль
-        ProfileUpdateForKafka profileEvent = ProfileUpdateForKafka.fromProfile(profile);
-        kafkaProducerService.sendMessage(profileEvent, "update_profile");
+        processUpdateForKafkaEvent(profile, activityBeforeUpdate);
 
         return ProfileResponse.fromProfile(profile);
+    }
+
+    private void processUpdateForKafkaEvent(Profile profile, boolean activityBeforeUpdate) {
+        if (activityBeforeUpdate && profile.getActiveInSearch()) {
+            ProfileUpdateForKafka profileEvent = ProfileUpdateForKafka.fromProfile(profile);
+            kafkaProducerService.sendMessage(profileEvent, "update_profile");
+        }
+        else if (!activityBeforeUpdate && profile.getActiveInSearch()) {
+            ProfileUpdateForKafka profileEvent = ProfileUpdateForKafka.fromProfile(profile);
+            kafkaProducerService.sendMessage(profileEvent, "active_profile");
+        }
+        else if (activityBeforeUpdate && !profile.getActiveInSearch()) {
+            kafkaProducerService.sendMessage(profile.getUserId().toString(), "passive_profile");
+        }
     }
 
     private boolean refreshProfileFromDTO(Profile profile, ProfileUpdateDTO profileUpdate) {
@@ -149,8 +162,8 @@ public class ProfileService {
 
     // todo Сделать логику проверки
     private boolean profileIsReadyForSearch(Profile profile) {
-        return (!profile.getPhotoLinks().isEmpty() && profile.getGeoPoint() != null
-                && profile.getFirstName() != null && profile.getCity() != null);
+        return (/*!profile.getPhotoLinks().isEmpty() && profile.getGeoPoint() != null
+                &&*/ profile.getFirstName() != null && profile.getCity() != null);
     }
 
 

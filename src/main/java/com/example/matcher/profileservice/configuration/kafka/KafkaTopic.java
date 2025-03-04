@@ -22,7 +22,17 @@ public class KafkaTopic {
         return TopicBuilder.name("update_profile").build();
     }
 
+    @Bean
     public NewTopic topic4() {
+        return TopicBuilder.name("passive_profile").build();
+    }
+
+    @Bean
+    public NewTopic topic5() {
+        return TopicBuilder.name("active_profile").build();
+    }
+
+    public NewTopic topic6() {
         return TopicBuilder.name("status_connection_update").build();
     }
 }

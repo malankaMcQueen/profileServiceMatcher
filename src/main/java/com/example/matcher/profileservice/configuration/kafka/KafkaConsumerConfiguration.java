@@ -91,7 +91,7 @@ public class KafkaConsumerConfiguration {
         configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
         configProps.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, jsonDeserializer);
 
-        return new DefaultKafkaConsumerFactory<>(configProps, new StringDeserializer(), jsonDeserializer);
+        return new DefaultKafkaConsumerFactory<>(configProps, new StringDeserializer(), new ErrorHandlingDeserializer<>(jsonDeserializer));
     }
 
     @Bean
