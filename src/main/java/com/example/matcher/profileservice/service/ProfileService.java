@@ -77,9 +77,9 @@ public class ProfileService {
 
         profileRepository.save(profile);
 
+        processUpdateForKafkaEvent(profile, profileBeenActive);
         if (profileBeenActive != profile.getActiveInSearch()) {
-            ProfileUpdateForKafka profileEvent = ProfileUpdateForKafka.fromProfile(profile);
-            kafkaProducerService.sendMessage(profileEvent, "update_profile");
+            processUpdateForKafkaEvent(profile, profileBeenActive);
         }
 
         return photoLinks;
@@ -102,8 +102,7 @@ public class ProfileService {
         s3Service.deleteFile(link);
 
         if (profileBeenActive != profile.getActiveInSearch()) {
-            ProfileUpdateForKafka profileEvent = ProfileUpdateForKafka.fromProfile(profile);
-            kafkaProducerService.sendMessage(profileEvent, "update_profile");
+            processUpdateForKafkaEvent(profile, profileBeenActive);
         }
         return photoLinks;
     }
