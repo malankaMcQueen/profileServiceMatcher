@@ -116,6 +116,7 @@
             <artifactId>s3</artifactId>
             <version>2.20.101</version> <!-- Укажи актуальную версию -->
         </dependency>
+
         <dependency>
             <groupId>ch.hsr</groupId>
             <artifactId>geohash</artifactId>
@@ -131,6 +132,12 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.0.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+			<version>4.23.1</version>
 		</dependency>
 
 	</dependencies>

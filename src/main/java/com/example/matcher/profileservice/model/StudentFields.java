@@ -6,11 +6,12 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Data
-@AllArgsConstructor
 @Builder
-@NoArgsConstructor
 @EqualsAndHashCode(exclude = "profile")
-@Entity(name = "student")
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(schema = "profile", name = "student")
 public class StudentFields {
 
     @Id

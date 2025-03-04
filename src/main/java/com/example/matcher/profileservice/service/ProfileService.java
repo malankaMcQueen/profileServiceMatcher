@@ -150,7 +150,7 @@ public class ProfileService {
                 | ProfileUtils.updateField(profileUpdate.getSearchAgeMin(), profile::getSearchAgeMin, profile::setSearchAgeMin)
                 | ProfileUtils.updateField(profileUpdate.getSearchAgeMax(), profile::getSearchAgeMax, profile::setSearchAgeMax)
                 | ProfileUtils.updateField(profileUpdate.getSearchGender(), profile::getSearchGender, profile::setSearchGender);
-        if (profile.getIsStudent()) {
+        if (profile.getIsStudent() && profileUpdate.getStudentFields() != null) {
             isUpdated = isUpdated | ProfileUtils.updateField(profileUpdate.getStudentFields().getSearchFaculty(),
                     profile.getStudentFields()::getSearchFaculty, profile.getStudentFields()::setSearchUniversity)
                     | ProfileUtils.updateField(profileUpdate.getStudentFields().getSearchUniversity(),
