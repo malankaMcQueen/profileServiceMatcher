@@ -20,10 +20,12 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(schema = "profile", name = "profile")
 public class Profile {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(unique = true, nullable = false)
     private UUID userId;
 
@@ -45,9 +47,17 @@ public class Profile {
     private Byte searchAgeMax;
     private Gender searchGender;
 
-    private String university;
-    private String faculty;
+    private Boolean activeInSearch = false;
+    private Boolean isStudent = false;
 
-    private String searchUniversity;
-    private String searchFaculty;
+    @OneToOne(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private StudentFields studentFields;
+
+//    private boolean isStudent;
+
+//    private String university;
+//    private String faculty;
+//
+//    private String searchUniversity;
+//    private String searchFaculty;
 }

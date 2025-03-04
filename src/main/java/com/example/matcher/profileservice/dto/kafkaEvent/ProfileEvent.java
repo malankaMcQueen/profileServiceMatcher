@@ -44,10 +44,10 @@ public class ProfileEvent {
                 .searchAgeMin(profile.getSearchAgeMin())
                 .searchAgeMax(profile.getSearchAgeMax())
                 .searchGender(profile.getSearchGender())
-                .university(profile.getUniversity())
-                .faculty(profile.getFaculty())
-                .searchUniversity(profile.getSearchUniversity())
-                .searchFaculty(profile.getSearchFaculty())
+//                .university(profile.getUniversity())
+//                .faculty(profile.getFaculty())
+//                .searchUniversity(profile.getSearchUniversity())
+//                .searchFaculty(profile.getSearchFaculty())
                 .build();
     }
 
