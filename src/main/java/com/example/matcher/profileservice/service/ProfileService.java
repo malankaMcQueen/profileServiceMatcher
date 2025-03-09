@@ -202,6 +202,14 @@ public class ProfileService {
         Profile profile = profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Пользователь с данным ID не найден."));
         profile.setGeoPoint(geoHashService.decodeGeoHash(geoHash));
-        return ProfileResponse.fromProfile(profileRepository.save(profile));
+
+        boolean activityBeforeUpdate = profile.getActiveInSearch();
+        profile.setActiveInSearch(profileIsReadyForSearch(profile));
+        profile = profileRepository.save(profile);
+
+        processUpdateForKafkaEvent(profile, activityBeforeUpdate);
+
+        profileRepository.save(profile);
+        return ProfileResponse.fromProfile(profile);
     }
 }
